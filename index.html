@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Secret Surprise — Happy Birthday Shabina 🎉</title>
+  <style>
+    :root{--bg1:#0f172a;--bg2:#0b1220;--accent:#ff4d6d}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{
+      background: radial-gradient(1000px 600px at 10% 20%, rgba(255,77,109,0.12), transparent),
+                  radial-gradient(800px 500px at 90% 80%, rgba(79,70,229,0.08), transparent),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:20px
+    }
+
+    .stage{width:920px;max-width:100%;min-height:560px;background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));border-radius:18px;padding:36px;box-shadow:0 20px 50px rgba(2,6,23,0.7);position:relative;overflow:hidden}
+
+    header{display:flex;align-items:center;gap:14px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#ff7a9a,#ffb199);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
+    h4{margin:0;font-size:20px}
+    p.lead{margin:6px 0 0;opacity:0.9}
+
+    /* envelope */
+    .center{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column}
+    .envelope{width:360px;height:220px;background:linear-gradient(180deg,#ffecea,#ffdfe6);border-radius:12px;position:relative;cursor:pointer;transform-origin:center;transition:transform .45s ease}
+    .envelope .flap{position:absolute;left:0;right:0;top:0;height:55%;background:linear-gradient(180deg,#ffb6c1,#ff98b6);clip-path:polygon(0 0,100% 0,50% 100%);border-top-left-radius:12px;border-top-right-radius:12px;display:flex;align-items:flex-start;justify-content:center;padding-top:18px}
+    .envelope .body{position:absolute;left:12px;right:12px;bottom:12px;top:55px;background:linear-gradient(180deg,#fff,#fff8);border-radius:8px;padding:18px;box-shadow:inset 0 2px 6px rgba(0,0,0,0.06)}
+    .seal{width:68px;height:68px;border-radius:999px;background:radial-gradient(circle at 30% 25%, #fff6, #0002);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;position:absolute;left:calc(50% - 34px);top:calc(50% - 34px);transform:translateY(6px);}
+
+    .hint{margin-top:18px;opacity:0.95}
+
+    /* letter inside */
+    .letter{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.98);width:330px;height:420px;background:linear-gradient(180deg,#fff,#fffef9);border-radius:10px;padding:26px;box-shadow:0 18px 40px rgba(2,6,23,0.45);display:none;flex-direction:column;align-items:center}
+    .letter h1{margin:0;font-family:Georgia,serif;color:#b91c1c;font-size:34px}
+    .letter p{margin:14px 0 0;color:#333;font-size:16px}
+
+    /* small control area */
+    .controls{position:absolute;right:22px;top:22px;display:flex;gap:8px}
+    .btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:#fff;cursor:pointer}
+    .btn:active{transform:translateY(1px)}
+
+    /* reveal area */
+    .reveal{position:absolute;left:0;right:0;bottom:0;height:220px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.35));display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px;gap:12px}
+    .secret-input{padding:10px 14px;border-radius:12px;border:0;outline:none;width:260px;font-size:16px}
+
+    /* celebration text */
+    .big-msg{position:absolute;left:50%;top:28%;transform:translateX(-50%);text-align:center;display:none}
+    .big-msg h2{font-size:56px;margin:0;letter-spacing:1px}
+    .big-msg p{margin:8px 0 0;font-size:20px}
+
+    /* fireworks (CSS) */\    
+    .firework{position:absolute;pointer-events:none}
+
+    /* responsive */
+    @media (max-width:600px){.envelope{width:280px;height:170px}.letter{width:260px;height:340px}.big-msg h2{font-size:36px}}
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <header>
+      <div class="logo">🎁</div>
+      <div>
+        <h4>Top Secret Surprise</h4>
+        <p class="lead">Find the letter. Open it. Say the secret. Then — BOOM — surprise!</p>
+      </div>
+      <div class="controls">
+        <button class="btn" id="hintBtn">Hint</button>
+        <button class="btn" id="resetBtn">Reset</button>
+      </div>
+
+    </header>
+
+    <div class="center">
+      <div id="envelope" class="envelope" title="Click to open the envelope">
+        <div class="flap"></div>
+        <div class="body"></div>
+        <div class="seal">❤</div>
+      </div>
+
+      <div class="hint">Click the envelope to open the secret letter...</div>
+
+      <div id="letter" class="letter" aria-hidden="true">
+        <h1>To my Shabina 💕</h1>
+        <p>There's a little riddle you must whisper to unlock the surprise.</p>
+        <p style="margin-top:10px;font-size:13px;color:#666">(Hint available — press the Hint button)</p>
+      </div>
+    </div>
+
+    <div class="reveal" id="revealArea" style="display:none">
+      <input id="secret" class="secret-input" placeholder="Type the secret word here" autocomplete="off" />
+      <div style="display:flex;gap:12px;align-items:center">
+        <button class="btn" id="openBtn">Open Surprise</button>
+        <span style="opacity:.85;font-size:14px">or press Enter</span>
+      </div>
+    </div>
+
+    <div class="big-msg" id="bigMsg">
+      <h2 id="titleMsg">HAPPY BIRTHDAY GAT 🎉</h2>
+      <p id="subtitleMsg">You are loved more than words. — From your child</p>
+    </div>
+
+    <!-- canvas for confetti -->
+    <canvas id="confettiCanvas" class="firework"></canvas>
+
+  </div>
+
+  <script>
+    /* --- Config: change secret here if you want --- */
+    const SECRET_WORD = 'shabina'; // case-insensitive
+
+    const envelope = document.getElementById('envelope');
+    const letter = document.getElementById('letter');
+    const revealArea = document.getElementById('revealArea');
+    const secretInput = document.getElementById('secret');
+    const openBtn = document.getElementById('openBtn');
+    const bigMsg = document.getElementById('bigMsg');
+    const confettiCanvas = document.getElementById('confettiCanvas');
+    const hintBtn = document.getElementById('hintBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let opened=false;
+
+    envelope.addEventListener('click',()=>{
+      if(opened) return;
+      opened=true;
+      // flap animation
+      envelope.style.transform='translateY(-8px) rotateX(12deg)';
+      setTimeout(()=>{
+        envelope.style.transform='scale(0.9) translateY(-12px)';
+        // show letter
+        letter.style.display='flex';
+        // reveal input
+        revealArea.style.display='flex';
+        // hide envelope after a moment
+        setTimeout(()=>envelope.style.display='none',600);
+      },300);
+    });
+
+    openBtn.addEventListener('click',tryOpen);
+    secretInput.addEventListener('keydown',e=>{if(e.key==='Enter') tryOpen()});
+
+    hintBtn.addEventListener('click',()=>{
+      alert('Think: the name on this page. It is also the star of today. (Hint: The word that has all of us here together. Hint 2: Our company name.<160;i++){
+        confettiParticles.push({x: random(0,confettiCanvas.width), y: random(-confettiCanvas.height,0), w: random(6,12), h: random(8,16), vx: random(-1.5,1.5), vy: random(1,4), rot: random(0,360), vr: random(-6,6), color: colors[i%colors.length]});
+      }
+      if(!confettiAnimId) confettiLoop();
+      // stop after 8s
+      setTimeout(stopConfetti,8000);
+    }
+
+    function confettiLoop(){
+      confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+      for(let p of confettiParticles){
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.vy += 0.02; // gravity
+        confettiCtx.save(); confettiCtx.translate(p.x,p.y); confettiCtx.rotate(p.rot*Math.PI/180);
+        confettiCtx.fillStyle = p.color; confettiCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+        confettiCtx.restore();
+      }
+      confettiParticles = confettiParticles.filter(p=>p.y < confettiCanvas.height+40);
+      if(confettiParticles.length==0){stopConfetti(); return}
+      confettiAnimId = requestAnimationFrame(confettiLoop);
+    }
+
+    function stopConfetti(){ if(confettiAnimId){ cancelAnimationFrame(confettiAnimId); confettiAnimId=null; confettiCtx && confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); }}
+
+    /* ------------------ Crackers effect (bursting circles) ------------------ */
+    function launchCrackers(){
+      // small bursts using DOM elements
+      for(let i=0;i<14;i++){
+        createBurst(random(10,90)+'%', random(10,80)+'%');
+      }
+    }
+    function createBurst(left,top){
+      const burst = document.createElement('div');
+      burst.style.position='absolute'; burst.style.left=left; burst.style.top=top; burst.style.width='8px'; burst.style.height='8px'; burst.style.borderRadius='999px'; burst.style.zIndex='900';
+      document.querySelector('.stage').appendChild(burst);
+      const colors = ['#ff4d6d','#ffd166','#06d6a0','#4d90fe','#b388eb'];
+      const count = 18;
+      for(let i=0;i<count;i++){
+        const dot = document.createElement('div'); dot.style.width='6px'; dot.style.height='6px'; dot.style.position='absolute'; dot.style.left='0'; dot.style.top='0'; dot.style.borderRadius='50%'; dot.style.background=colors[Math.floor(Math.random()*colors.length)];
+        burst.appendChild(dot);
+        const angle = Math.random()*Math.PI*2; const dist = Math.random()*160+40; const dur = 700+Math.random()*600;
+        dot.animate([{transform:`translate(0,0) scale(1)`},{transform:`translate(${Math.cos(angle)*dist}px,${Math.sin(angle)*dist}px) scale(.6)`}],{duration:dur,easing:'cubic-bezier(.12,.8,.22,1)'});
+        dot.animate([{opacity:1},{opacity:0}],{duration:dur,fill:'forwards'});
+      }
+      setTimeout(()=>burst.remove(),1300);
+    }
+
+    // little flourish: auto-focus when letter shown
+    const obs = new MutationObserver(()=>{ if(revealArea.style.display==='flex') secretInput.focus(); });
+    obs.observe(revealArea,{attributes:true,childList:true,subtree:true});
+
+    // small accessibility: allow spacebar to open envelope when focused
+    document.addEventListener('keydown',e=>{ if(e.code==='Space' && !opened){ e.preventDefault(); envelope.click(); } });
+
+  </script>
+<p style="margin-top:20px; font-size:1rem; opacity:0.8; text-align:center;">By GAT</p>
+</body>
+</html>
